@@ -42,7 +42,7 @@ Deux modèles ont été construits: un CNN (utilisé pour la classification bina
 Les détails de l'architecture des modèles sont présents dans le module `models.py`. Vous pouvez ajouter vos propres modèles et les entrainer.
 
 ### classification binaire
-Après entrainement du modèle, il a été testé sur les données de test. On obtient les résultats ci-dessous:
+Après entrainement du modèle, il a été testé sur les données de test. On obtient les résultats ci-dessous:  
 <a href="./graphics/cf_binaryClassif.png"><img alt="matrice de confusion classification binaire" src="./graphics/cf_binaryClassif.png"></img></a>  
 Figure de la matrice de confusion pour la classification binaire
 
