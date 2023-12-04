@@ -1,0 +1,10 @@
+.ipynb_checkpoints/
+Defi3_reprise_NLP.ipynb
+word2vec.model
+model_nlp.model/
+response.model
+__pycache__/
+modules/__pycache__/ 
+modules/frWac_non_lem_no_postag_no_phrase_200_skip_cut100.bin
+data_defi3.csv
+
