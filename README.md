@@ -20,7 +20,7 @@ Ci-dessous, un apercu du fichiers `.csv`.
 
 le fichier [preprocesser.py] situé dans le module `modules` contient des fonctions nécessaires pour le prétraitement. Selon le type de classification (binaire ou multiple), les opérations classiques ont été réalisées:
 - tokénisation, retrait des mots vides, transformation des documents en séquences tokenisées, transformations des majuscules, grâce à la bibliothèque gensim.
-  le corpus ici présent en français. La liste des mots vides intégrés à gensim n'est donc pas utile, car son vocabulaire est en anglais. Il a fallu ajouter une opération supplémentaire de filtration des mots vides;
+  le corpus ici présent en français. La liste des mots vides intégrés à gensim n'est donc pas utile, car son vocabulaire est en anglais. Il a fallu ajouter une opération supplémentaire de filtration des mots vides. Si vous voulez utiliser la liste des mots vides en français et réaliser aussi la lemmatisation, il faut utiliser la fonction 'formatted_sequences_Spacy()' dans le module [preprocesser.py] à la place de la fonction 'formatted_sequences()'; Rassurez-vous qu'une version compatible de SpaCy est installée au préalable dans votre environnement.
 - le recodage des etiquettes;
 - la suppression des lignes de avec valeurs manquantes.
 
