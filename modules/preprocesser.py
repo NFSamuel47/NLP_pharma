@@ -4,7 +4,7 @@ Created on Mon Nov 20 13:50:25 2023
 
 @author: Fabrice
 """
-
+import spacy
 import numpy as np
 import gensim #cette bibliothèque contient des modules pour le prétraitement (tokenisation, vectorisation, ...)
 from sklearn.model_selection import train_test_split  #separation des données en entrainement et en test
@@ -14,7 +14,7 @@ def formatted_table(table, dictionary, colnames):
     cette fonction récupère une dataframe ayant les colonnes 'Libellé.Prescription',
     'Avis.Pharmaceutique' et 'PLT'. Ensuite selon le dictionnaire passé en entré,
     retourne une autre dataframe contenant des avis pharmaceutiques classés dans la
-    colonne 'label'.
+    colonne 'avis', en fonction de la colonne 'label'.
     Le dictionnaire permet de redéfinir les classes initialement présentes dans PLT.
     '''
     
@@ -37,8 +37,27 @@ def formatted_table(table, dictionary, colnames):
     return table1
 
 
+def formatted_test_set(table, colnames=['avis']):
+    '''
+    cette fonction récupère une dataframe ayant les colonnes 'Libellé.Prescription' et
+    'Avis.Pharmaceutique' et retourne une autre dataframe contenant des avis 
+    pharmaceutiques dans une colonne renommée 'avis. Les NA sont supprimés'
+    '''
+    
+    #supprimer la colonne (le champs) intitulée 'Libellé.Prescription' car elle n'est pas utilisée
+    table1=table.drop('Libellé.Prescription',axis=1)
+    
+    # renommer les colonnes
+    table1.columns = colnames
+    
+    #supprimer les lignes complètent qui contiennent des valeurs manquantes dans n'importe quelle de leurs colonnes.
+    table1=table1.dropna()
+    
+    return table1
+
+
 def formatted_sequences(corpus, nowords_list):
-    '''Cette fonction utiliser la bibliothèque gensim pour prétraiter la colonne 'avis'
+    '''Cette fonction utilise la bibliothèque gensim pour prétraiter la colonne 'avis'
         contenant du texte. Parmis les opérations de prétraitrement, on a la 
         transformation des textes en séquences, la tokénisation des mots, la conversion
         de tous les mots en majuscule. Le préproceseur de Gensim etant spécialisé pour 
@@ -55,6 +74,39 @@ def formatted_sequences(corpus, nowords_list):
     
     corpus2 = corpus1.apply(filter_words)
     return corpus2
+
+#=======================================================================================
+nlp = spacy.load("fr_core_news_sm")
+# Obtenir la liste des stopwords en français 
+stopwords = spacy.lang.fr.stop_words.STOP_WORDS
+
+def formatted_sequences_Spacy(corpus, nowords_list):
+    '''Cette fonction est une version légèrement différente de 'formatted sequences'. 
+        Ici, on utilise aussi la bibliothèque SpaCy qui possède un vocabulaire qui 
+        permet de réaliser la lemmatisation, et de mieux traiter les stopworlds.
+    '''
+    def text_cleaner(corpus):
+        doc = nlp(corpus)
+        lemmatized_text = " ".join([token.lemma_ for token in doc])
+        # Filtrer les tokens qui ne sont pas des stopwords
+        doc2 = nlp(lemmatized_text)
+        tokens_without_stopwords = [token.text for token in doc2 if token.text.lower() not in stopwords]
+    
+        # Rejoindre les tokens pour former le texte nettoyé
+        cleaned_text = ' '.join(tokens_without_stopwords)
+        return (cleaned_text)
+
+    corpus1=corpus.apply(text_cleaner)
+
+    #texte (sequences) tokénisé, et débarassé des stopwords (en anglais) et transformés en minuscule
+    corpus2=corpus1.apply(gensim.utils.simple_preprocess)
+    
+    #suppression supllémentaire des mots du corpus presents dans la nowords_list
+    def filter_words(word_list):
+        return [word for word in word_list if word not in nowords_list]
+    
+    corpus3 = corpus2.apply(filter_words)
+    return corpus3
 
 def float2int(value):
     '''
